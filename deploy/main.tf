@@ -74,8 +74,6 @@ resource "azurerm_windows_virtual_machine" "ad-ds-vm" {
     sku       = "2019-Datacenter"
     version   = "latest"
   }
-
-  custom_data = local.custom_data_ad_ds
 }
 
 # Azure Bastion para acceso seguro a la VM
