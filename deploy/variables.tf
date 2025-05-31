@@ -13,5 +13,5 @@ variable "admin_password" {
 
 variable "ruta_local" {
   type      = string
-  sensitive = true  # Oculta la contraseña en logs
+  sensitive = true  # Oculta la ruta en logs
 }
