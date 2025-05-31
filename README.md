@@ -3,7 +3,7 @@
 
 No solo crearé de forma automática este AD-DS, sino que tras la creación de la máquina virtual, se iniciará y ejecutará un script de PowerShell que configurará nuestro Active Directory.
 
-Para la creación mencionada, desde Terraform, también crearé:
+Para ello, desde Terraform, también crearé:
 
   -Un grupo de recursos
   
