@@ -1,0 +1,7 @@
+# Excluir archivos de configuración sensibles
+secrets.tfvars
+
+# Excluir archivos generados por Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
