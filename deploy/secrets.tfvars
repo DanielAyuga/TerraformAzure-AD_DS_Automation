@@ -1,4 +1,3 @@
-tenant_id       = "XXXXXXXX-XXXX-XXXX-XXXXXXXX"
 subscription_id = "XXXXXXXX-XXXX-XXXX-XXXXXXXX"
 
 admin_password  = "xxxxxxxxxxxx"
