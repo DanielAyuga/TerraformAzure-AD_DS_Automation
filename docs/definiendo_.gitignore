@@ -1,0 +1,9 @@
+## Definiendo .gitignore
+
+# Excluir archivos de configuración sensibles
+secrets.tfvars      #No se subirá a Git
+
+# Excluir archivos generados por Terraform
+*.tfstate           #Guardan información sobre los recursos creados, sus atributos y relaciones
+*.tfstate.backup   
+.terraform/
