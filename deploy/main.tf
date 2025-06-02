@@ -39,7 +39,7 @@ resource "azurerm_network_security_group" "nsg" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-# Interfaz de red **sin IP publica**
+# Interfaz de red
 resource "azurerm_network_interface" "nic-ad-ds" {
   name                = "nic-ad-ds"
   location            = azurerm_resource_group.rg.location
@@ -76,7 +76,7 @@ resource "azurerm_windows_virtual_machine" "ad-ds-vm" {
   }
 }
 
-# Azure Bastion para acceso seguro a la VM
+# Azure Bastion
 resource "azurerm_bastion_host" "bastion" {
   name                = "bastion-ad-ds"
   location            = azurerm_resource_group.rg.location
@@ -97,6 +97,7 @@ resource "azurerm_public_ip" "bastion_ip" {
   sku                 = "Standard"  # Bastion requiere IP Standard
 }
 
+# Cuenta de almacenamiento
 resource "azurerm_storage_account" "storage" {
   name                     = "mystaccdsfs64565dfsrhs"
   resource_group_name      = azurerm_resource_group.rg.name
@@ -105,12 +106,14 @@ resource "azurerm_storage_account" "storage" {
   account_replication_type = "LRS"
 }
 
+# Contenedor para la cuenta de almacenamiento
 resource "azurerm_storage_container" "scripts_container" {
   name                  = "scripts"
   storage_account_id    = azurerm_storage_account.storage.id
   container_access_type = "blob"
 }
 
+# Blob
 resource "azurerm_storage_blob" "ad_setup_script" {
   name                   = "ad_setup.ps1"
   storage_account_name   = azurerm_storage_account.storage.name
@@ -119,6 +122,7 @@ resource "azurerm_storage_blob" "ad_setup_script" {
   source                 = var.ruta_local
 }
 
+# Extensión de vm
 resource "azurerm_virtual_machine_extension" "run_ad_setup" {
   name                 = "run-ad-setup"
   virtual_machine_id   = azurerm_windows_virtual_machine.ad-ds-vm.id
