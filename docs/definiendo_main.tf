@@ -1,7 +1,7 @@
 ## Definiendo main.tf
 
 # Grupo de recursos
-resource "azurerm_resource_group" "rg" {    #Indicamos con "azurerm_resource_group" que el recurso que vamos a crear es resource group al que llamaremos rg en terraform
+resource "azurerm_resource_group" "rg" {    #Indicamos con "azurerm_resource_group" que el recurso que vamos a crear es resource group al que llamaremos "rg" en terraform
   provider = azurerm                        #Indicamos qué "azurerm" es el provider que va a realizar la acción de dar de alta el recurso
   name     = "AD-DS-rg"                     #Nombre del recurso en Azure
   location = "East US"                      #Localización donde se va a crear
@@ -12,36 +12,36 @@ resource "azurerm_resource_group" "rg" {    #Indicamos con "azurerm_resource_gro
 }
 
 # Red virtual y subred
-resource "azurerm_virtual_network" "vnet" {                        #Indicamos con "azurerm_virtual_network" que el recurso que vamos a crear es una red virtual que llamaremos vnet en terraform
+resource "azurerm_virtual_network" "vnet" {                        #Indicamos con "azurerm_virtual_network" que el recurso que vamos a crear es una red virtual que llamaremos "vnet" en terraform
   name                = "vnet-ad-ds"                               #Nombre del recurso en Azure
   location            = azurerm_resource_group.rg.location         #La localización será la que tenga el grupo de recursos (rg.location) rg -> nombre del grupo en terraform
-  resource_group_name = azurerm_resource_group.rg.name             #En que grupo de recursos creamos la vnet. En este caso en el rg que acabamos de definir (rg.name)
-  address_space       = ["10.0.0.0/16"]                            #Creamos una red /16 
+  resource_group_name = azurerm_resource_group.rg.name             #En que grupo de recursos creamos la vnet. En este caso en el rg que acabamos de definir rg.name (rg.AD-DS-rg)
+  address_space       = ["10.0.0.0/16"]                            #Prefijo CIDR de la vnet /16 (10.0.0.1 - 10.0.255.254)
 }
 
-resource "azurerm_subnet" "subnet" {
-  name                 = "subnet-ad-ds"
-  resource_group_name  = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.1.0/24"]
+resource "azurerm_subnet" "subnet" {                               #Indicamos con "azurerm_subnet" que el recurso que vamos a crear es una subnet que llamaremos "subnet" en terraform
+  name                 = "subnet-ad-ds"                            #Nombre del recurso en Azure
+  resource_group_name  = azurerm_resource_group.rg.name            #En que grupo de recursos creamos la subnet. En este caso en el rg hemos definido (rg.name)
+  virtual_network_name = azurerm_virtual_network.vnet.name         #A que vnet asociaremos esta subnet. vnet.name (vnet.vnet-ad-ds)
+  address_prefixes     = ["10.0.1.0/24"]                           #Prefijo CIDR de la subnet /24 (10.0.1.1 - 10.0.1.254)
 }
 
-# Subred para Azure Bastion
-resource "azurerm_subnet" "bastion_subnet" {
-  name                 = "AzureBastionSubnet"  # Nombre obligatorio
-  resource_group_name  = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.2.0/27"]  # Recomendado para Bastion
+# Subred para Azure Bastion    
+resource "azurerm_subnet" "bastion_subnet" {                              #Indicamos con "azurerm_subnet" que el recurso que vamos a crear es una subnet que llamaremos "bastion_subnet" en terraform
+  name                 = "AzureBastionSubnet"  # Nombre obligatorio       #Nombre **OBLIGATORIO** para la subnet de Bastion en Azure. Si no tiene este nombre no funcionará.
+  resource_group_name  = azurerm_resource_group.rg.name                   #En que grupo de recursos creamos la subnet. En este caso en el rg hemos definido (rg.name)
+  virtual_network_name = azurerm_virtual_network.vnet.name                #A que vnet asociaremos esta subnet. vnet.name (vnet.vnet-ad-ds)
+  address_prefixes     = ["10.0.2.0/27"]                                  #Permitido /27-/24 (/27 recomendado para Bastion)
 }
 
 # Grupo de seguridad de red
-resource "azurerm_network_security_group" "nsg" {
-  name                = "nsg-ad-ds"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+resource "azurerm_network_security_group" "nsg" {                         #Indicamos con "aazurerm_network_security_group" que el recurso que vamos a crear es un nsg que llamaremos "nsg" en terraform
+  name                = "nsg-ad-ds"                                       #Nombre del recurso en Azure
+  location            = azurerm_resource_group.rg.location                #La localización será la que tenga el grupo de recursos (rg.location) rg -> nombre del grupo en terraform
+  resource_group_name = azurerm_resource_group.rg.name                    #En que grupo de recursos creamos el nsg. En este caso en el rg que acabamos de definir rg.name (rg.AD-DS-rg)
 }
 
-# Interfaz de red **sin IP publica**
+# Interfaz de red
 resource "azurerm_network_interface" "nic-ad-ds" {
   name                = "nic-ad-ds"
   location            = azurerm_resource_group.rg.location
