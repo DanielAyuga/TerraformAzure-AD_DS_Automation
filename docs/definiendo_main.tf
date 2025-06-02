@@ -24,6 +24,8 @@ resource "azurerm_subnet" "subnet" {                               #Indicamos co
   resource_group_name  = azurerm_resource_group.rg.name            #En que grupo de recursos creamos la subnet. En este caso en el rg hemos definido (rg.name)
   virtual_network_name = azurerm_virtual_network.vnet.name         #A que vnet asociaremos esta subnet. vnet.name (vnet.vnet-ad-ds)
   address_prefixes     = ["10.0.1.0/24"]                           #Prefijo CIDR de la subnet /24 (10.0.1.1 - 10.0.1.254) (excluyendo la primera 10.0.1.0 y última 10.0.1.255 para red y broadcast)
+
+  service_endpoints = ["Microsoft.Storage"]
 }
 
 # Subred para Azure Bastion    
@@ -160,16 +162,23 @@ resource "azurerm_public_ip" "bastion_ip" {                               #Indic
 resource "azurerm_storage_account" "storage" {                            #Indicamos con "azurerm_storage_account" que el recurso que vamos a crear es una cuenta de almacenamiento que llamaremos "storage" en terraform
   name                     = "mystaccdsfs64565dfsrhs"                     #Nombre del recurso en Azure *DEBE SER UNICO GLOBALMENTE*
   resource_group_name      = azurerm_resource_group.rg.name               #En que grupo de recursos creamos la cuenta de almacenamiento. En el que hemos creado rg.name (rg.AD-DS-rg)
-
   location                 = azurerm_resource_group.rg.location           #Se toma la ubicación del grupo de recursos definido anteriormente
   account_tier             = "Standard"                                   #Rendimiento de la cuenta. Con Standard para el ejemplo es suficiente. (Puede ser premium)
   account_replication_type = "LRS"                                        #Tipo redundancia para la cuenta: Standard_LRS almacena 3 copias del disco dentro de un mismo datacenter, el cual pertenece a una única zona de disponibilidad de la región 
+
+network_rules {
+    default_action             = "Deny" # Bloquea accesos desde Internet
+    virtual_network_subnet_ids = [azurerm_subnet.subnet.id] # Permite solo acceso desde la VNet
+    bypass                     = ["AzureServices"] # Permite acceso desde servicios internos de Azure
+  }
 }
 
 # Contenedor para la cuenta de almacenamiento
 resource "azurerm_storage_container" "scripts_container" {               #Indicamos con "azurerm_storage_container" que el recurso que vamos a crear es un contenedor que llamaremos "scripts_container" en terraform
   name                  = "scripts"                                      #Nombre del recurso en Azure
   storage_account_id    = azurerm_storage_account.storage.id             #En que cuenta de almacenamiento creamos el contenedor. Terraform vinculará automáticamente el contenedor a la cuenta de almacenamiento en el momento de la creación
+  container_access_type = "private"
+}
 
 # Blob
 resource "azurerm_storage_blob" "ad_setup_script" {                              #Indicamos con "azurerm_storage_blob" que el recurso que vamos a crear es un blob que llamaremos "ad_setup_script" en terraform
