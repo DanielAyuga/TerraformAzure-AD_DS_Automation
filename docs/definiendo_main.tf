@@ -35,50 +35,50 @@ resource "azurerm_subnet" "bastion_subnet" {                              #Indic
 }
 
 # Grupo de seguridad de red
-resource "azurerm_network_security_group" "nsg" {                         #Indicamos con "aazurerm_network_security_group" que el recurso que vamos a crear es un nsg que llamaremos "nsg" en terraform
+resource "azurerm_network_security_group" "nsg" {                         #Indicamos con "azurerm_network_security_group" que el recurso que vamos a crear es un nsg que llamaremos "nsg" en terraform
   name                = "nsg-ad-ds"                                       #Nombre del recurso en Azure
   location            = azurerm_resource_group.rg.location                #La localización será la que tenga el grupo de recursos (rg.location) rg -> nombre del grupo en terraform
   resource_group_name = azurerm_resource_group.rg.name                    #En que grupo de recursos creamos el nsg. En este caso en el rg que acabamos de definir rg.name (rg.AD-DS-rg)
 }
 
 # Interfaz de red
-resource "azurerm_network_interface" "nic-ad-ds" {
-  name                = "nic-ad-ds"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+resource "azurerm_network_interface" "nic-ad-ds" {                        #Indicamos con "azurerm_network_interface" que el recurso que vamos a crear es una NIC que llamaremos "nic-ad-ds" en terraform
+  name                = "nic-ad-ds"                                       #Nombre del recurso en Azure
+  location            = azurerm_resource_group.rg.location                #La localización será la que tenga el grupo de recursos (rg.location) rg -> nombre del grupo en terraform
+  resource_group_name = azurerm_resource_group.rg.name                    #En que grupo de recursos creamos la NIC. En el que hemos creado rg.name (rg.AD-DS-rg)
 
-  ip_configuration {
-    name                          = "ipconfig-ad-ds"
-    subnet_id                     = azurerm_subnet.subnet.id
-    private_ip_address_allocation = "Dynamic"
+  ip_configuration {                                                      #Vamos a definir la configuración ip de la NIC
+    name                          = "ipconfig-ad-ds"                      #Nombre de la IP privada en Azure
+    subnet_id                     = azurerm_subnet.subnet.id              #En que subnet crearemos esta IP. Estará dentro del rango 10.0.1.1 - 10.0.1.254 ["10.0.1.0/24"]
+    private_ip_address_allocation = "Dynamic"                             #De que forma se asignará la IP. Dynamic te la asigna automáticamente dentro del rango. Static puedes indicar tu la IP.
+  }
+}
+              
+# Máquina virtual con Windows Server 2019                                
+resource "azurerm_windows_virtual_machine" "ad-ds-vm" {                   #Indicamos con "azurerm_windows_virtual_machine" que el recurso que vamos a crear es una maquina virtual que llamaremos "ad-ds-vm" en terraform
+  name                = "ad-ds-vm"                                        #Nombre del recurso en Azure
+  resource_group_name = azurerm_resource_group.rg.name                    #En que grupo de recursos creamos la vm. En este caso en el rg que acabamos de definir rg.name (rg.AD-DS-rg)
+  location            = azurerm_resource_group.rg.location                #La localización será la que tenga el grupo de recursos (rg.location) rg -> nombre del grupo en terraform
+  size                = "Standard_D2S_v3"                                 #Tipo de vm (SKU). Familia Dsv3 (optimizada para computación general) | vCPUs: 2 | RAM: 8 GB | Disco temporal: 16 GB | Soporte para almacenamiento premium SSD: Sí.
+  admin_username      = "adminuser"                                       #Nombre del usuario administrador de la vm
+  admin_password      = var.admin_password                                #Password del usuario administrador de la vm. **La pasamos en secrets.tfvars como sensible**
+
+  network_interface_ids = [azurerm_network_interface.nic-ad-ds.id]        #Asociamos la NIC que hemos credao a esta vm. Hacemos referencia a su .id. (Aunque de momento no tenga .id Terraform hace la asociacion en la creación)
+
+  os_disk {                                                               #Disco del sistema operativo
+    caching              = "ReadWrite"                                    #Politica de caché: Permite leer y escribir (podría ser "none" o "readonly"
+    storage_account_type = "Standard_LRS"                                 #Tipo de almacenamiento para el disco: Standard_LRS = 3 copias del disco en el mismo centro de datos en una zona de disponibilidad (la región cuenta con 3 zonas de disponibilidad)
+  }
+
+  source_image_reference {                                                #Definiremos que imagen usaremos de vm
+    publisher = "MicrosoftWindowsServer"                                  #Entidad que proporciona la imagen
+    offer     = "WindowsServer"                                           #Oferta, corresponde a que familia pertenece la imagen
+    sku       = "2019-Datacenter"                                         #SKU (Stock Keeping Unit) dentro de esta familia
+    version   = "latest"                                                  #Ultima versión de los Windos Server 2019 Datacenter
   }
 }
 
-# Máquina virtual con Windows Server 2019
-resource "azurerm_windows_virtual_machine" "ad-ds-vm" {
-  name                = "ad-ds-vm"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  size                = "Standard_D2S_v3"
-  admin_username      = "adminuser"
-  admin_password      = var.admin_password
-
-  network_interface_ids = [azurerm_network_interface.nic-ad-ds.id]
-
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-
-  source_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2019-Datacenter"
-    version   = "latest"
-  }
-}
-
-# Azure Bastion para acceso seguro a la VM
+# Azure Bastion
 resource "azurerm_bastion_host" "bastion" {
   name                = "bastion-ad-ds"
   location            = azurerm_resource_group.rg.location
@@ -99,6 +99,7 @@ resource "azurerm_public_ip" "bastion_ip" {
   sku                 = "Standard"  # Bastion requiere IP Standard
 }
 
+# Cuenta de almacenamiento
 resource "azurerm_storage_account" "storage" {
   name                     = "mystaccdsfs64565dfsrhs"
   resource_group_name      = azurerm_resource_group.rg.name
@@ -107,12 +108,14 @@ resource "azurerm_storage_account" "storage" {
   account_replication_type = "LRS"
 }
 
+# Contenedor para la cuenta de almacenamiento
 resource "azurerm_storage_container" "scripts_container" {
   name                  = "scripts"
   storage_account_id    = azurerm_storage_account.storage.id
   container_access_type = "blob"
 }
 
+# Blob
 resource "azurerm_storage_blob" "ad_setup_script" {
   name                   = "ad_setup.ps1"
   storage_account_name   = azurerm_storage_account.storage.name
@@ -121,6 +124,7 @@ resource "azurerm_storage_blob" "ad_setup_script" {
   source                 = var.ruta_local
 }
 
+# Extensión de vm
 resource "azurerm_virtual_machine_extension" "run_ad_setup" {
   name                 = "run-ad-setup"
   virtual_machine_id   = azurerm_windows_virtual_machine.ad-ds-vm.id
