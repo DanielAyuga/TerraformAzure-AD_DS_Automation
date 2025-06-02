@@ -1,3 +1,6 @@
+## Definiendo ad_setup.ps1
+
+#Configuración BASICA de AD-DS
 
 Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools   #Instala Active Directory Domain Services (ADDS) para permitir la creación de un dominio incluidas herramientas de administración como ADUC (Active Directory Users and Computers)
 Install-WindowsFeature RSAT-AD-PowerShell                                 #Instala las herramientas de administración remota (RSAT) para Active Directory en PowerShell. Esto permite ejecutar comandos de AD directamente en PowerShell.
