@@ -131,8 +131,8 @@ resource "azurerm_virtual_machine_extension" "run_ad_setup" {                   
   type                 = "CustomScriptExtension"                                 #Tipo de extensión. En este caso el de script personalizado
   type_handler_version = "1.10"                                                  #Versión de la extensión
 
-#En este apartado lo que vamos a definir es de donde va a coger la vm el script (primera linea "fileUris" en la que indicamos que será la cuenta de almacenamiento/contenedor/script)
-Que comando debe ejecutar. Indicamos que con Powershell ejecute lo que se indica (segunda linea)#
+#En el apartado SETTINGS lo que vamos a definir es de donde va a coger la vm el script (primera linea "fileUris" en la que indicamos que será la cuenta de almacenamiento/contenedor/script)
+#Que comando debe ejecutar. Indicamos que con Powershell ejecute lo que se indica (segunda linea)
 
   settings = <<SETTINGS                                                         
     {
