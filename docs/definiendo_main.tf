@@ -79,60 +79,62 @@ resource "azurerm_windows_virtual_machine" "ad-ds-vm" {                   #Indic
 }
 
 # Azure Bastion
-resource "azurerm_bastion_host" "bastion" {
-  name                = "bastion-ad-ds"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+resource "azurerm_bastion_host" "bastion" {                               #Indicamos con "azurerm_bastion_host" que el recurso que vamos a crear es un Bastion que llamaremos "bastion" en terraform
+  name                = "bastion-ad-ds"                                   #Nombre del recurso en Azure
+  location            = azurerm_resource_group.rg.location                #La localización será la que tenga el grupo de recursos (rg.location) rg -> nombre del grupo en terraform
+  resource_group_name = azurerm_resource_group.rg.name                    #En que grupo de recursos creamos el Bastion. En el que hemos creado rg.name (rg.AD-DS-rg)
 
-  ip_configuration {
-    name                 = "bastion-ip-config"
-    subnet_id            = azurerm_subnet.bastion_subnet.id
-    public_ip_address_id = azurerm_public_ip.bastion_ip.id
+  ip_configuration {                                                      #Definimos la configuración IP que tendrá
+    name                 = "bastion-ip-config"                            #Nombre de la configuración IP en Azure
+    subnet_id            = azurerm_subnet.bastion_subnet.id               #Asociamos Bastion a su subnet específica
+    public_ip_address_id = azurerm_public_ip.bastion_ip.id                #Asociamos Bastion a la IP pública que crearemos a continuación
   }
 }
 
-resource "azurerm_public_ip" "bastion_ip" {
-  name                = "bastion-public-ip"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Static"
-  sku                 = "Standard"  # Bastion requiere IP Standard
+resource "azurerm_public_ip" "bastion_ip" {                               #Indicamos con "azurerm_public_ip" que el recurso que vamos a crear es una IP publica que llamaremos "bastion_ip" en terraform
+  name                = "bastion-public-ip"                               #Nombre del recurso en Azure
+  location            = azurerm_resource_group.rg.location                #La localización será la que tenga el grupo de recursos (rg.location) rg -> nombre del grupo en terraform
+  resource_group_name = azurerm_resource_group.rg.name                    #En que grupo de recursos creamos la IP publica. En el que hemos creado rg.name (rg.AD-DS-rg)
+  allocation_method   = "Static"                                          #Bastion siempre requiere que la IP sea estática, no cambiará
+  sku                 = "Standard"                                        #Bastion requiere IP Standard (entre otras cosas para poder acceder a vms en redes emparejadas)
 }
 
 # Cuenta de almacenamiento
-resource "azurerm_storage_account" "storage" {
-  name                     = "mystaccdsfs64565dfsrhs"
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
+resource "azurerm_storage_account" "storage" {                            #Indicamos con "azurerm_storage_account" que el recurso que vamos a crear es una cuenta de almacenamiento que llamaremos "storage" en terraform
+  name                     = "mystaccdsfs64565dfsrhs"                     #Nombre del recurso en Azure *DEBE SER UNICO GLOBALMENTE*
+  resource_group_name      = azurerm_resource_group.rg.name               #En que grupo de recursos creamos la cuenta de almacenamiento. En el que hemos creado rg.name (rg.AD-DS-rg)
+
+  location                 = azurerm_resource_group.rg.location           #La localización será la que tenga el grupo de recursos (rg.location) rg -> nombre del grupo en terraform
+  account_tier             = "Standard"                                   #Rendimiento de la cuenta. Con Standard para el ejemplo es suficiente. (Puede ser premium)
+  account_replication_type = "LRS"                                        #Tipo redundancia para la cuenta: Standard_LRS = 3 copias de la cuenta en el mismo centro de datos en una zona de disponibilidad (la región cuenta con 3 zonas de disponibilidad) 
 }
 
 # Contenedor para la cuenta de almacenamiento
-resource "azurerm_storage_container" "scripts_container" {
-  name                  = "scripts"
-  storage_account_id    = azurerm_storage_account.storage.id
-  container_access_type = "blob"
-}
+resource "azurerm_storage_container" "scripts_container" {               #Indicamos con "azurerm_storage_container" que el recurso que vamos a crear es un contenedor que llamaremos "scripts_container" en terraform
+  name                  = "scripts"                                      #Nombre del recurso en Azure
+  storage_account_id    = azurerm_storage_account.storage.id             #En que cuenta de almacenamiento creamos el contenedor. Hacemos referencia a su .id. (Aunque de momento no tenga .id Terraform hace la asociacion en la creación)
 
 # Blob
-resource "azurerm_storage_blob" "ad_setup_script" {
-  name                   = "ad_setup.ps1"
-  storage_account_name   = azurerm_storage_account.storage.name
-  storage_container_name = azurerm_storage_container.scripts_container.name
-  type                   = "Block"
-  source                 = var.ruta_local
+resource "azurerm_storage_blob" "ad_setup_script" {                              #Indicamos con "azurerm_storage_blob" que el recurso que vamos a crear es un blob que llamaremos "ad_setup_script" en terraform
+  name                   = "ad_setup.ps1"                                        #Nombre del blob en Azure
+  storage_account_name   = azurerm_storage_account.storage.name                  #En que cuenta de almacenamiento creamos el blob
+  storage_container_name = azurerm_storage_container.scripts_container.name      #En que contenedor creamos el blob
+  type                   = "Block"                                               #Tipo de blob, bloque:
+  source                 = var.ruta_local                                        #Donde se encuentra el script que vamos a subir al contenedor. A la ruta hacemos referencia en variables.tf y secrets.tfvars ("C:/Microsoft VS Code/code/active_directoy/active_directory-vm/scripts/ad_setup.ps1"=
 }
 
 # Extensión de vm
-resource "azurerm_virtual_machine_extension" "run_ad_setup" {
-  name                 = "run-ad-setup"
-  virtual_machine_id   = azurerm_windows_virtual_machine.ad-ds-vm.id
-  publisher            = "Microsoft.Compute"
-  type                 = "CustomScriptExtension"
-  type_handler_version = "1.10"
+resource "azurerm_virtual_machine_extension" "run_ad_setup" {                    #Indicamos con "azurerm_virtual_machine_extension" que el recurso que vamos a crear es una extensión de vm que llamaremos "run_ad_setup" en terraform
+  name                 = "run-ad-setup"                                          #Nombre del recurso en Azure
+  virtual_machine_id   = azurerm_windows_virtual_machine.ad-ds-vm.id             #Referenciamos que vm será la que ejecute este script
+  publisher            = "Microsoft.Compute"                                     #Entdidad del script a ejecutar
+  type                 = "CustomScriptExtension"                                 #Tipo de extensión. En este caso el de script personalizado
+  type_handler_version = "1.10"                                                  #Versión de la extensión
 
-  settings = <<SETTINGS
+#En este apartado lo que vamos a definir es de donde va a coger la vm el script (primera linea "fileUris" en la que indicamos que será la cuenta de almacenamiento/contenedor/script)
+Que comando debe ejecutar. Indicamos que con Powershell ejecute lo que se indica (segunda linea)#
+
+  settings = <<SETTINGS                                                         
     {
       "fileUris": ["https://${azurerm_storage_account.storage.name}.blob.core.windows.net/${azurerm_storage_container.scripts_container.name}/ad_setup.ps1"],
       "commandToExecute": "powershell -ExecutionPolicy Unrestricted -Command \"Invoke-WebRequest -Uri 'https://${azurerm_storage_account.storage.name}.blob.core.windows.net/${azurerm_storage_container.scripts_container.name}/ad_setup.ps1' -OutFile 'C:\\ad_setup.ps1'; powershell -ExecutionPolicy Unrestricted -File C:\\ad_setup.ps1\""
