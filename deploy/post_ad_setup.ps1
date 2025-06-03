@@ -1,4 +1,4 @@
-# Agregar el sufijo UPN para sincronización con Entra ID
+# Agregar el sufijo UPN
 $context = [System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
 $context.UpnSuffixes.Add("midominiodeAzure.com")
 Write-Output "Sufijo UPN agregado correctamente."
@@ -7,11 +7,12 @@ Write-Output "Sufijo UPN agregado correctamente."
 $gpoPath = "C:\\Windows\\SYSVOL\\domain\\Policies"
 New-Item -Path "$gpoPath\\GPO-Seguridad" -ItemType Directory
 New-Item -Path "$gpoPath\\GPO-Restricciones" -ItemType Directory
-    
+
+# Creación de GPO
 Import-Module GroupPolicy
 New-GPO -Name "BloquearUSB"
 New-GPLink -Name "BloquearUSB" -Target "DC=miejemplo,DC=local"
 Set-GPRegistryValue -Name "BloquearUSB" -Key "HKLM\\SYSTEM\\CurrentControlSet\\Services\\USBSTOR" -ValueName "Start" -Type DWORD -Value 4
 
-#Eliminar tarea programada
+# Eliminar tarea programada
 Unregister-ScheduledTask -TaskName "PostADDSConfig" -Confirm:$false
