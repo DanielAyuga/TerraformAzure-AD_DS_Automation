@@ -1,5 +1,5 @@
 # TerraformAzure-AD_DS_Automation
-## Creación automatizada de una máquina virtual "Windows Server 2019" con "Active Directory Domain Services"
+## Creación automatizada de una máquina virtual "Windows Server 2019" con "Active Directory Domain Services" + condifuración automatizada
 
 No solo crearé de forma automática este AD-DS, sino que tras la creación de la máquina virtual, se iniciará y ejecutará un script de PowerShell que configurará nuestro Active Directory.
 <br><br>
