@@ -11,18 +11,20 @@ Para ello, desde Terraform, también crearé:
   
   - Una subnet para Azure Bastión
   
-  - Un grupo de seguridad de red (NSG)
+  - Un grupo de seguridad de red (NSG) + reglas
   
   - Una interfaz de red (NIC)
   
-  - Una maquina virtual
+  - Una maquina virtual + extensión customscript
   
-  - El propio Bastión
+  - El host Bastión
   
   - La IP pública de Bastión
   
   - Una Storage Account
   
   - Un contenedor de blobs
+  
+  - Un blob
 <br><br>
 *La carpeta deploy contiene todos los archivos de configuración y la carpeta docs contiene estos documentos explicados, así como un esquema visual y recomendaciones particulares y generales para desarrollar este y otros proyectos*
