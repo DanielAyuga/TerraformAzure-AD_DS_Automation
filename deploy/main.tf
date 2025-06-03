@@ -153,7 +153,7 @@ resource "azurerm_public_ip" "bastion_ip" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
-  sku                 = "Standard"  # Bastion requiere IP Standard
+  sku                 = "Standard"
 }
 
 # Cuenta de almacenamiento
@@ -165,9 +165,9 @@ resource "azurerm_storage_account" "storage" {
   account_replication_type = "LRS"
 
   network_rules {
-    default_action             = "Deny" # Bloquea accesos desde Internet
-    virtual_network_subnet_ids = [azurerm_subnet.subnet.id] # Permite solo acceso desde la VNet
-    bypass                     = ["AzureServices"] # Permite acceso desde servicios internos de Azure
+    default_action             = "Deny" 
+    virtual_network_subnet_ids = [azurerm_subnet.subnet.id]
+    bypass                     = ["AzureServices"]
   }
 }
 
