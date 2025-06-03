@@ -180,13 +180,22 @@ resource "azurerm_storage_container" "scripts_container" {               #Indica
   container_access_type = "private"                                      #Tipo de acceso del contenedor. Privado (podría ser también blob o container)
 }
 
-# Blob
+# Creación del blob dentro del contenedor
 resource "azurerm_storage_blob" "ad_setup_script" {                              #Indicamos con "azurerm_storage_blob" que el recurso que vamos a crear es un blob que llamaremos "ad_setup_script" en terraform
   name                   = "ad_setup.ps1"                                        #Nombre del blob en Azure
   storage_account_name   = azurerm_storage_account.storage.name                  #En que cuenta de almacenamiento creamos el blob
   storage_container_name = azurerm_storage_container.scripts_container.name      #En que contenedor creamos el blob
   type                   = "Block"                                               #Tipo de blob, bloque:
-  source                 = var.ruta_local                                        #Donde se encuentra el script que vamos a subir al contenedor. A la ruta hacemos referencia en variables.tf y secrets.tfvars ("C:/Microsoft VS Code/code/active_directoy/active_directory-vm/scripts/ad_setup.ps1"=
+  source                 = var.ruta_local_ad_setup                               #Donde se encuentra el script que vamos a subir al contenedor. A la ruta hacemos referencia en variables.tf y secrets.tfvars ("C:/Microsoft VS Code/code/active_directoy/active_directory-vm/scripts/ad_setup.ps1"=
+}
+
+# Creación del blob dentro del contenedor
+resource "azurerm_storage_blob" "post_ad_setup_script" {
+  name                   = "post_ad_setup.ps1"
+  storage_account_name   = azurerm_storage_account.storage.name
+  storage_container_name = azurerm_storage_container.scripts_container.name
+  type                   = "Block"
+  source                 = var.ruta_local_post_ad_setup
 }
 
 # Extensión de vm
