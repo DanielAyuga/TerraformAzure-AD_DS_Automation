@@ -1,6 +1,6 @@
 ## Definiendo post_ad_setup.ps1
 
-# Agregar el sufijo UPN para sincronización con Entra ID
+# Agregar el sufijo UPN
 $context = [System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
 $context.UpnSuffixes.Add("midominiodeAzure.com")
 Write-Output "Sufijo UPN agregado correctamente."
@@ -9,7 +9,8 @@ Write-Output "Sufijo UPN agregado correctamente."
 $gpoPath = "C:\\Windows\\SYSVOL\\domain\\Policies"
 New-Item -Path "$gpoPath\\GPO-Seguridad" -ItemType Directory
 New-Item -Path "$gpoPath\\GPO-Restricciones" -ItemType Directory
-    
+
+# Creación de GPO
 Import-Module GroupPolicy
 New-GPO -Name "BloquearUSB"
 New-GPLink -Name "BloquearUSB" -Target "DC=miejemplo,DC=local"
