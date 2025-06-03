@@ -28,10 +28,10 @@ resource "azurerm_subnet" "subnet" {
 
 # Subred para Azure Bastion
 resource "azurerm_subnet" "bastion_subnet" {
-  name                 = "AzureBastionSubnet"  # Nombre obligatorio
+  name                 = "AzureBastionSubnet"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.2.0/27"]  # Recomendado para Bastion
+  address_prefixes     = ["10.0.2.0/27"]
 }
 
 # Grupo de seguridad de red
