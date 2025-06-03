@@ -1,4 +1,4 @@
-#Instalación de Active Directory Domain Services (AD DS)
+#Instalación de Active Directory Domain Services (AD DS) y DNS
 Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
 Install-WindowsFeature RSAT-AD-PowerShell
 Import-Module ActiveDirectory
