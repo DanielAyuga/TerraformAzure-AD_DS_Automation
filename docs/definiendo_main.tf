@@ -168,7 +168,7 @@ resource "azurerm_storage_account" "storage" {                            #Indic
 
 network_rules {
     default_action             = "Deny"                                   #Bloquea accesos desde Internet
-    virtual_network_subnet_ids = [azurerm_subnet.subnet.id]               #Permite el acceso solo desde la VNet
+    virtual_network_subnet_ids = [azurerm_subnet.subnet.id]               #Permite el acceso solo desde la vnet
     bypass                     = ["AzureServices"]                        #Permite el acceso desde servicios internos de Azure
   }
 }
