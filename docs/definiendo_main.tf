@@ -25,7 +25,7 @@ resource "azurerm_subnet" "subnet" {                               #Indicamos co
   virtual_network_name = azurerm_virtual_network.vnet.name         #A que vnet asociaremos esta subnet. vnet.name (vnet.vnet-ad-ds)
   address_prefixes     = ["10.0.1.0/24"]                           #Prefijo CIDR de la subnet /24 (10.0.1.1 - 10.0.1.254) (excluyendo la primera 10.0.1.0 y última 10.0.1.255 para red y broadcast)
 
-  service_endpoints = ["Microsoft.Storage"]                        #Habilita la comunicación entre la subnet y la cuenta de almacenamiento a nivel interno. La comunicación es sobre la red de Azure.
+  service_endpoints = ["Microsoft.Storage"]                        #Habilita la comunicación entre la subnet y la cuenta de almacenamiento a nivel interno. La comunicación es sobre la red de Azure no sobre Internet.
 }
 
 # Subred para Azure Bastion    
