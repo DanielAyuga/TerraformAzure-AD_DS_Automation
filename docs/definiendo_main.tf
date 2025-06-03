@@ -204,7 +204,7 @@ resource "azurerm_virtual_machine_extension" "run_ad_setup" {                   
 #La primera línea define la ubicación del script (ad_setup.ps1) dentro del contenedor de la cuenta de almacenamiento en Azure
 #La segunda linea define la ubicación del script (post_ad_setup.ps1) dentro del contenedor de la cuenta de almacenamiento en Azure
 
-#Eln la tercera línea definimos que el script ad_setup se pegue en C: y se ejecute y que post_ad_setup se copie en C: pero no se ejecute. Se ejceutará tras el reinicio que provoca el primer script
+#En la tercera línea definimos que el script "ad_setup" se pegue en C: y se ejecute con el inicio de la vm y que "post_ad_setup" se copie en C: pero no se ejecute. Se ejceutará tras el reinicio que provoca el primer script
  
   settings = <<SETTINGS                                                         
     {
