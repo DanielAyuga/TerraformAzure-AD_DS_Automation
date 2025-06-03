@@ -167,9 +167,9 @@ resource "azurerm_storage_account" "storage" {                            #Indic
   account_replication_type = "LRS"                                        #Tipo redundancia para la cuenta: Standard_LRS almacena 3 copias del disco dentro de un mismo datacenter, el cual pertenece a una única zona de disponibilidad de la región 
 
 network_rules {
-    default_action             = "Deny" # Bloquea accesos desde Internet
-    virtual_network_subnet_ids = [azurerm_subnet.subnet.id] # Permite solo acceso desde la VNet
-    bypass                     = ["AzureServices"] # Permite acceso desde servicios internos de Azure
+    default_action             = "Deny"                                   #Bloquea accesos desde Internet
+    virtual_network_subnet_ids = [azurerm_subnet.subnet.id]               #Permite el acceso solo desde la VNet
+    bypass                     = ["AzureServices"]                        #Permite el acceso desde servicios internos de Azure
   }
 }
 
@@ -177,7 +177,7 @@ network_rules {
 resource "azurerm_storage_container" "scripts_container" {               #Indicamos con "azurerm_storage_container" que el recurso que vamos a crear es un contenedor que llamaremos "scripts_container" en terraform
   name                  = "scripts"                                      #Nombre del recurso en Azure
   storage_account_id    = azurerm_storage_account.storage.id             #En que cuenta de almacenamiento creamos el contenedor. Terraform vinculará automáticamente el contenedor a la cuenta de almacenamiento en el momento de la creación
-  container_access_type = "private"
+  container_access_type = "private"                                      #Tipo de acceso del contenedor. Privado (podría ser también blob o container)
 }
 
 # Blob
