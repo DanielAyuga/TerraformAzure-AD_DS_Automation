@@ -197,18 +197,23 @@ resource "azurerm_virtual_machine_extension" "run_ad_setup" {                   
   type                 = "CustomScriptExtension"                                 #Tipo de extensión. En este caso el de script personalizado
   type_handler_version = "1.10"                                                  #Versión específica de la extensión CustomScriptExtension que se ejecutará en la VM
 
-#En el apartado SETTINGS lo que vamos a definir es de donde va a coger la vm el script (La primera línea "fileUris" define la ubicación del script dentro del contenedor de la cuenta de almacenamiento en Azure)
-#En la segunda linea definimos el comando que ejecutará PowerShell en la VM. Primero descarga el script usando 'Invoke-WebRequest', lo guarda en 'C:\\', y luego lo ejecuta con 'powershell -File
 
+#El apartado SETTINGS define lo que hará la extensión custom script:
 
+#"fileUris"
+#La primera línea define la ubicación del script (ad_setup.ps1) dentro del contenedor de la cuenta de almacenamiento en Azure
+#La segunda linea define la ubicación del script (post_ad_setup.ps1) dentro del contenedor de la cuenta de almacenamiento en Azure
+
+#Eln la tercera línea definimos que el script ad_setup se pegue en C: y se ejecute y que post_ad_setup se copie en C: pero no se ejecute. Se ejceutará tras el reinicio que provoca el primer script
+ 
   settings = <<SETTINGS                                                         
     {
-      "fileUris": ["https://${azurerm_storage_account.storage.name}.blob.core.windows.net/${azurerm_storage_container.scripts_container.name}/ad_setup.ps1"],
-      "commandToExecute": "powershell -ExecutionPolicy Unrestricted -Command \"Invoke-WebRequest -Uri 'https://${azurerm_storage_account.storage.name}.blob.core.windows.net/${azurerm_storage_container.scripts_container.name}/ad_setup.ps1' -OutFile 'C:\\ad_setup.ps1'; powershell -ExecutionPolicy Unrestricted -File C:\\ad_setup.ps1\""
+      "fileUris": [
+        "https://${azurerm_storage_account.storage.name}.blob.core.windows.net/${azurerm_storage_container.scripts_container.name}/ad_setup.ps1",
+        "https://${azurerm_storage_account.storage.name}.blob.core.windows.net/${azurerm_storage_container.scripts_container.name}/post_ad_setup.ps1"
+      ],
+      "commandToExecute": "powershell -ExecutionPolicy Unrestricted -Command \"Invoke-WebRequest -Uri 'https://${azurerm_storage_account.storage.name}.blob.core.windows.net/${azurerm_storage_container.scripts_container.name}/ad_setup.ps1' -OutFile 'C:\\ad_setup.ps1'; Invoke-WebRequest -Uri 'https://${azurerm_storage_account.storage.name}.blob.core.windows.net/${azurerm_storage_container.scripts_container.name}/post_ad_setup.ps1' -OutFile 'C:\\post_ad_setup.ps1'; powershell -ExecutionPolicy Unrestricted -File C:\\ad_setup.ps1\""
     }
-
-    {
-      "fileUris": ["https://${azurerm_storage_account.storage.name}.blob.core.windows.net/${azurerm_storage_container.scripts_container.name}/post_ad_setup.ps1"]
-    }
-SETTINGS
+  SETTINGS
 }
+
