@@ -73,7 +73,7 @@ resource "azurerm_network_security_rule" "deny_all_inbound" {
 resource "azurerm_network_security_rule" "allow_storage_access" {
   resource_group_name         = azurerm_resource_group.rg.name
   name                        = "Allow-Storage-Access"
-  priority                    = 300
+  priority                    = 100
   direction                   = "Outbound"
   access                      = "Allow"
   protocol                    = "Tcp"
@@ -87,7 +87,7 @@ resource "azurerm_network_security_rule" "allow_storage_access" {
 resource "azurerm_network_security_rule" "deny_all_outbound" {
   resource_group_name         = azurerm_resource_group.rg.name
   name                        = "Deny-All-Outbound"
-  priority                    = 400
+  priority                    = 200
   direction                   = "Outbound"
   access                      = "Deny"
   protocol                    = "*"
