@@ -178,13 +178,22 @@ resource "azurerm_storage_container" "scripts_container" {
   container_access_type = "private"
 }
 
-# Blob
+# Creación del blob dentro del contenedor
 resource "azurerm_storage_blob" "ad_setup_script" {
   name                   = "ad_setup.ps1"
   storage_account_name   = azurerm_storage_account.storage.name
   storage_container_name = azurerm_storage_container.scripts_container.name
   type                   = "Block"
-  source                 = var.ruta_local
+  source                 = var.ruta_local_ad_setup
+}
+
+# Creación del blob dentro del contenedor
+resource "azurerm_storage_blob" "post_ad_setup_script" {
+  name                   = "post_ad_setup.ps1"
+  storage_account_name   = azurerm_storage_account.storage.name
+  storage_container_name = azurerm_storage_container.scripts_container.name
+  type                   = "Block"
+  source                 = var.ruta_local_post_ad_setup
 }
 
 # Extensión de vm
