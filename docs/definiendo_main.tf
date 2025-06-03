@@ -25,7 +25,7 @@ resource "azurerm_subnet" "subnet" {                               #Indicamos co
   virtual_network_name = azurerm_virtual_network.vnet.name         #A que vnet asociaremos esta subnet. vnet.name (vnet.vnet-ad-ds)
   address_prefixes     = ["10.0.1.0/24"]                           #Prefijo CIDR de la subnet /24 (10.0.1.1 - 10.0.1.254) (excluyendo la primera 10.0.1.0 y última 10.0.1.255 para red y broadcast)
 
-  service_endpoints = ["Microsoft.Storage"]
+  service_endpoints = ["Microsoft.Storage"]                        #Habilita la comunicación entre la subnet y la cuenta de almacenamiento a nivel interno. La comunicación es sobre la red de Azure.
 }
 
 # Subred para Azure Bastion    
@@ -44,60 +44,60 @@ resource "azurerm_network_security_group" "nsg" {                         #Indic
 }
 
 # Reglas de NSG
-resource "azurerm_network_security_rule" "allow_bastion_rdp" {
-  resource_group_name         = azurerm_resource_group.rg.name
-  name                        = "Allow-Bastion-RDP"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "3389"
-  source_address_prefix       = "AzureBastionSubnet"
-  destination_address_prefix  = "VirtualNetwork"
-  network_security_group_name = azurerm_network_security_group.nsg.name
+resource "azurerm_network_security_rule" "allow_bastion_rdp" {           #Indicamos con "azurerm_network_security_rule" que el recurso que vamos a crear es una regla para el nsg que llamaremos "allow_bastion_rdp" en terraform
+  resource_group_name         = azurerm_resource_group.rg.name           #En que grupo de recursos creamos la regla. En este caso en el rg que acabamos de definir rg.name (rg.AD-DS-rg)
+  name                        = "Allow-Bastion-RDP"                      #Nombre de la regla en Azure
+  priority                    = 100                                      #Prioridad de la regla. Cuanto mas bajo es el numero, mayor prioridad. Está regla será la primera en aplicar para tráfico entrante
+  direction                   = "Inbound"                                #En que sentido se aplica la regla. En este caso tráfico entrante
+  access                      = "Allow"                                  #Accion. Permitir/Denegar. En este caso permite
+  protocol                    = "Tcp"                                    #Protocolo de comunicación
+  source_port_range           = "*"                                      #Puerto origen del tráfico. * es cualquier puerto
+  destination_port_range      = "3389"                                   #Puerto de destino del tráfico. 3389 RDP (Remote Desktop Protocol)
+  source_address_prefix       = "AzureBastionSubnet"                     #Origen de tráfico. AzureBastionSubnet
+  destination_address_prefix  = "VirtualNetwork"                         #Destino del tráfico. Virtual Network
+  network_security_group_name = azurerm_network_security_group.nsg.name  #Nombre del nsg. Hacemos referencia al recurso nsg creado.
 }
 
-resource "azurerm_network_security_rule" "deny_all_inbound" {
-  resource_group_name         = azurerm_resource_group.rg.name
-  name                        = "Deny-All-Inbound"
-  priority                    = 200
-  direction                   = "Inbound"
-  access                      = "Deny"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = "Internet"
-  destination_address_prefix  = "*"
-  network_security_group_name = azurerm_network_security_group.nsg.name
+resource "azurerm_network_security_rule" "deny_all_inbound" {            #Indicamos con "azurerm_network_security_rule" que el recurso que vamos a crear es una regla para el nsg que llamaremos "deny_all_inbound" en terraform
+  resource_group_name         = azurerm_resource_group.rg.name           #En que grupo de recursos creamos la regla. En este caso en el rg que acabamos de definir rg.name (rg.AD-DS-rg)
+  name                        = "Deny-All-Inbound"                       #Nombre de la regla en Azure
+  priority                    = 200                                      #Prioridad de la regla. Cuanto mas bajo es el numero, mayor prioridad. Está regla será la segunda en aplicar para tráfico entrante
+  direction                   = "Inbound"                                #En que sentido se aplica la regla. En este caso tráfico entrante
+  access                      = "Deny"                                   #Accion. Permitir/Denegar. En este caso deniega
+  protocol                    = "*"                                      #Protocolo de comunicación. * es cualquier protocolo
+  source_port_range           = "*"                                      #Puerto origen del tráfico. * es cualquier puerto
+  destination_port_range      = "*"                                      #Puerto destino del tráfico. * es cualquier puerto
+  source_address_prefix       = "Internet"                               #Origen de tráfico. Cualquier tráfico externo que no provenga de la red interna de Azure 
+  destination_address_prefix  = "*"                                      #Destino del tráfico. Cualquiera (ya sea la vm, o cualquier otro servicio de Azure)
+  network_security_group_name = azurerm_network_security_group.nsg.name  #Nombre del nsg. Hacemos referencia al recurso nsg creado.
 }
 
-resource "azurerm_network_security_rule" "allow_storage_access" {
-  resource_group_name         = azurerm_resource_group.rg.name
-  name                        = "Allow-Storage-Access"
-  priority                    = 300
-  direction                   = "Outbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "443"
-  source_address_prefix       = "VirtualNetwork"
-  destination_address_prefix  = "Storage"
-  network_security_group_name = azurerm_network_security_group.nsg.name
+resource "azurerm_network_security_rule" "allow_storage_access" {        #Indicamos con "azurerm_network_security_rule" que el recurso que vamos a crear es una regla para el nsg que llamaremos "allow_storage_access" en terraform
+  resource_group_name         = azurerm_resource_group.rg.name           #En que grupo de recursos creamos la regla. En este caso en el rg que acabamos de definir rg.name (rg.AD-DS-rg)
+  name                        = "Allow-Storage-Access"                   #Nombre de la regla en Azure
+  priority                    = 100                                      #Prioridad de la regla. Cuanto mas bajo es el numero, mayor prioridad. Está regla será la primera en aplicar para tráfico saliente
+  direction                   = "Outbound"                               #En que sentido se aplica la regla. En este caso tráfico saliente
+  access                      = "Allow"                                  #Accion. Permitir/Denegar. En este caso permite
+  protocol                    = "Tcp"                                    #Protocolo de comunicación
+  source_port_range           = "*"                                      #Puerto origen del tráfico. * es cualquier puerto
+  destination_port_range      = "443"                                    #Puerto destino del tráfico. 443 HTTPS (Hypertext Transfer Protocol Secure)
+  source_address_prefix       = "VirtualNetwork"                         #Origen del tráfico. Virtual Network
+  destination_address_prefix  = "Storage"                                ##Destino del tráfico. Servicio Almacenamiento
+  network_security_group_name = azurerm_network_security_group.nsg.name  #Nombre del nsg. Hacemos referencia al recurso nsg creado.
 }
 
-resource "azurerm_network_security_rule" "deny_all_outbound" {
-  resource_group_name         = azurerm_resource_group.rg.name
-  name                        = "Deny-All-Outbound"
-  priority                    = 400
-  direction                   = "Outbound"
-  access                      = "Deny"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"
-  network_security_group_name = azurerm_network_security_group.nsg.name
+resource "azurerm_network_security_rule" "deny_all_outbound" {           #Indicamos con "azurerm_network_security_rule" que el recurso que vamos a crear es una regla para el nsg que llamaremos "deny_all_outbound" en terraform
+  resource_group_name         = azurerm_resource_group.rg.name           #En que grupo de recursos creamos la regla. En este caso en el rg que acabamos de definir rg.name (rg.AD-DS-rg)
+  name                        = "Deny-All-Outbound"                      #Nombre de la regla en Azure
+  priority                    = 200                                      #Prioridad de la regla. Cuanto mas bajo es el numero, mayor prioridad. Está regla será la segunda en aplicar para tráfico saliente
+  direction                   = "Outbound"                               #En que sentido se aplica la regla. En este caso tráfico saliente
+  access                      = "Deny"                                   #Accion. Permitir/Denegar. En este caso deniega
+  protocol                    = "*"                                      #Protocolo de comunicación. * es cualquier protocolo
+  source_port_range           = "*"                                      #Puerto origen del tráfico. * es cualquier puerto
+  destination_port_range      = "*"                                      #Puerto destino del tráfico. * es cualquier puerto
+  source_address_prefix       = "*"                                      #Origen del tráfico. * es cualquier origen
+  destination_address_prefix  = "*"                                      #Destino del tráfico. * es cualquier destino
+  network_security_group_name = azurerm_network_security_group.nsg.name  #Nombre del nsg. Hacemos referencia al recurso nsg creado.
 }
 
 # Interfaz de red
