@@ -196,6 +196,15 @@ resource "azurerm_storage_blob" "post_ad_setup_script" {
   source                 = var.ruta_local_post_ad_setup
 }
 
+# Creación del blob dentro del contenedor
+resource "azurerm_storage_blob" "users_json" {
+  name                   = "users_json"
+  storage_account_name   = azurerm_storage_account.storage.name
+  storage_container_name = azurerm_storage_container.scripts_container.name
+  type                   = "Block"
+  source                 = var.ruta_local_users_json
+}
+
 # Extensión de vm
 resource "azurerm_virtual_machine_extension" "run_ad_setup" {
   name                 = "run-ad-setup"
