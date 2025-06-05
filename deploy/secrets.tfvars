@@ -1,6 +1,10 @@
-subscription_id = "XXXXXXXX-XXXX-XXXX-XXXXXXXX"
+tenant_id                = "XXXXXXXX-XXXX-XXXX-XXXXXXXX"
 
-admin_password  = "xxxxxxxxxxxx"
+subscription_id          = "XXXXXXXX-XXXX-XXXX-XXXXXXXX"
 
-ruta_local_ad_setup           = "C:/Microsoft VS Code/code/active_directoy/active_directory-vm/scripts/ad_setup.ps1"
-ruta_local_post_ad_setup      = "C:/Microsoft VS Code/code/active_directoy/active_directory-vm/scripts/post_ad_setup.ps1"
+admin_password           = "xxxxxxxxxxxx"
+
+blob_sas_token           = "asdfKDKGFsdgñMsdgñ84354gSDG354Ssdlfkkpcoi!"
+
+ruta_local_ad_setup      = "C:/Microsoft VS Code/code/active_directoy/active_directory-vm/scripts/ad_setup.ps1"
+ruta_local_post_ad_setup = "C:/Microsoft VS Code/code/active_directoy/active_directory-vm/scripts/post_ad_setup.ps1"
