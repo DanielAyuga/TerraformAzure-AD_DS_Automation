@@ -1,5 +1,7 @@
 ## Definiendo post_ad_setup.ps1
 
+Start-Sleep -Seconds 60
+
 # Agregar el sufijo UPN
 $context = [System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
 $context.UpnSuffixes.Add("midominiodeAzure.com")
@@ -18,8 +20,14 @@ Set-GPRegistryValue -Name "BloquearUSB" -Key "HKLM\\SYSTEM\\CurrentControlSet\\S
 
 New-ADOrganizationalUnit -Name "Usuarios" -Path "DC=miejemplo,DC=local"
 
-# Cargar el contenido del archivo JSON
-$users = Get-Content "C:\usuarios.json" | ConvertFrom-Json
+# Usuarios
+$users = @(
+    @{ Name = 'Carlos Sanchez';   Username = 'csanchez';   Password = 'P@ssw0rd1' },
+    @{ Name = 'Ana Rodriguez';      Username = 'arodriguez';  Password = 'P@ssw0rd2' },
+    @{ Name = 'Miguel Lopez';       Username = 'mlopez';      Password = 'P@ssw0rd3' },
+    @{ Name = 'Elena Fernandez';    Username = 'efernandez';  Password = 'P@ssw0rd4' },
+    @{ Name = 'Javier Gomez';       Username = 'jgomez';      Password = 'P@ssw0rd5' }
+)
 
 # Importar el módulo de Active Directory
 Import-Module ActiveDirectory
@@ -31,10 +39,13 @@ foreach ($user in $users) {
                -UserPrincipalName "$($user.Username)@miejemplo.local" `
                -AccountPassword (ConvertTo-SecureString $user.Password -AsPlainText -Force) `
                -Enabled $true `
-               -Path "OU=Usuarios,DC=miejemplo,DC=local" `
+               -Path 'OU=Usuarios,DC=miejemplo,DC=local' `
                -PassThru | Out-Null
 
     Write-Output "Usuario $($user.Username) creado correctamente."
 }
 
-Write-Output "Todos los usuarios han sido creados exitosamente en Active Directory."
+Write-Output 'Todos los usuarios han sido creados exitosamente en Active Directory.'
+
+# Eliminar tarea programada
+Unregister-ScheduledTask -TaskName "PostADDSConfig" -Confirm:$false
