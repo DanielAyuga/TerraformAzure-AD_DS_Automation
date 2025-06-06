@@ -179,6 +179,12 @@ resource "azurerm_storage_account" "storage" {
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  network_rules {
+    default_action             = "Deny" # Bloquea accesos desde Internet
+    virtual_network_subnet_ids = [azurerm_subnet.subnet.id] # Permite solo acceso desde la VNet
+    bypass                     = ["AzureServices"] # Permite acceso desde servicios internos de Azure
+  }
 }
 
 # Creación de contenedor
