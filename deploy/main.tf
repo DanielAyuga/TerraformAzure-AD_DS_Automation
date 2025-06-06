@@ -206,6 +206,7 @@ resource "azurerm_storage_blob" "post_ad_setup_script" {
   source                 = var.ruta_local_post_ad_setup
 }
 
+#Creación del key vault
 resource "azurerm_key_vault" "keyvault" {
   name                = "mykvdsfs64565dfsrhs"  # Debe ser único globalmente
   location            = azurerm_resource_group.rg.location
@@ -215,12 +216,14 @@ resource "azurerm_key_vault" "keyvault" {
   enable_rbac_authorization = true
 }
 
+# Asignación rol administrador key vault
 resource "azurerm_role_assignment" "kv_secrets_admin" {
   scope                = azurerm_key_vault.keyvault.id
   role_definition_name = "Key Vault Administrator"
   principal_id         = data.azurerm_client_config.current.object_id
 }
 
+# Creación de SAS token
 resource "azurerm_key_vault_secret" "sas_token" {
   name         = "blob-sas-token"
   value        = data.azurerm_storage_account_sas.storagesas.sas
@@ -231,6 +234,7 @@ resource "azurerm_key_vault_secret" "sas_token" {
   ]
 }
 
+# Asignación de Usuario de Secretos a la VM
 resource "azurerm_role_assignment" "kv_secrets_user" {
   scope                = azurerm_key_vault.keyvault.id
   role_definition_name = "Key Vault Secrets User"
