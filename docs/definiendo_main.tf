@@ -212,36 +212,36 @@ resource "azurerm_storage_blob" "post_ad_setup_script" {                        
 }
 
 #Creación del key vault
-resource "azurerm_key_vault" "keyvault" {
-  name                = "mykvdsfs64565dfsrhs"  # Debe ser único globalmente
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  tenant_id           = var.tenant_id
-  sku_name            = "standard"
-  enable_rbac_authorization = true
+resource "azurerm_key_vault" "keyvault" {                                 #Indicamos con "azurerm_key_vault" que el recurso que vamos a crear es un Key Vault que llamaremos "keyvault" en terraform
+  name                = "mykvdsfs64565dfsrhs"                             #Nombre del recurso en Azure. Debe ser **ÚNICO GLOBALMENTE**
+  location            = azurerm_resource_group.rg.location                #Se toma la ubicación del grupo de recursos definido anteriormente
+  resource_group_name = azurerm_resource_group.rg.name                    #En que grupo de recursos creamos la cuenta de almacenamiento. En el que hemos creado rg.name (rg.AD-DS-rg)
+  tenant_id           = var.tenant_id                                     #Definimos que será la variable "var.tenant_id". Coge el valor de secrets.tfvars
+  sku_name            = "standard"                                        #Tipo de Key Vault de uso mas genérico
+  enable_rbac_authorization = true                                        #Habilita el uso de Azure Role-Based Access Control (RBAC) para gestionar el acceso
 }
 
 # Asignación rol administrador key vault
-resource "azurerm_role_assignment" "kv_secrets_admin" {
-  scope                = azurerm_key_vault.keyvault.id
-  role_definition_name = "Key Vault Administrator"
-  principal_id         = data.azurerm_client_config.current.object_id
+resource "azurerm_role_assignment" "kv_secrets_admin" {                   #Indicamos con "azurerm_role_assignment" que asignaremos un rol que llamaremos "kv_secrets_admin" en terraform
+  scope                = azurerm_key_vault.keyvault.id                    #Aplicaremos este rol sobre el kayvault haciendo referencia a su id
+  role_definition_name = "Key Vault Administrator"                        #Nombre del rol en Azure. Tambien podemos hacer referencia al id del rol.
+  principal_id         = data.azurerm_client_config.current.object_id     #A quién asignamos el rol. Esto hace referencia al cliente o entidad que ejcuta esta configuración de Terraform. Se define en data.tf
 }
 
 # Creación de SAS token
-resource "azurerm_key_vault_secret" "sas_token" {
-  name         = "blob-sas-token"
-  value        = data.azurerm_storage_account_sas.storagesas.sas
-  key_vault_id = azurerm_key_vault.keyvault.id
+resource "azurerm_key_vault_secret" "sas_token" {                         #Indicamos con "azurerm_key_vault_secret" que el recurso que vamos a crear es un secreto Key Vault que llamaremos "sas_token" en terraform
+  name         = "blob-sas-token"                                         #Nombre del recurso en Azure
+  value        = data.azurerm_storage_account_sas.storagesas.sas          #El valor (la confgiuración) del SAS token lo referenciamos de data.tf
+  key_vault_id = azurerm_key_vault.keyvault.id                            #Crearemos este secreto sobre el kayvault haciendo referencia a su id
 
-  depends_on = [
-    azurerm_role_assignment.kv_secrets_admin
+  depends_on = [                                                          #Hacemos referencia a que este recurso depende de la asincación del rol de Administrador de Key Vault
+    azurerm_role_assignment.kv_secrets_admin                              #Nos aseguramos que primero se asigne el rol y luego se cree el secreto. Evitamos el error
   ]
 }
 
 # Asignación de Usuario de Secretos a la VM
-resource "azurerm_role_assignment" "kv_secrets_user" {
-  scope                = azurerm_key_vault.keyvault.id
-  role_definition_name = "Key Vault Secrets User"
-  principal_id         = azurerm_windows_virtual_machine.ad-ds-vm.identity[0].principal_id
+resource "azurerm_role_assignment" "kv_secrets_user" {                                        #Indicamos con "azurerm_role_assignment" que asignaremos un rol que llamaremos "kv_secrets_user" en terraform
+  scope                = azurerm_key_vault.keyvault.id                                        #Aplicaremos este rol sobre el kayvault haciendo referencia a su id
+  role_definition_name = "Key Vault Secrets User"                                             #Nombre del rol en Azure. Tambien podemos hacer referencia al id del rol.
+  principal_id         = azurerm_windows_virtual_machine.ad-ds-vm.identity[0].principal_id    #A quién asignamos el rol. Esto hace referencia a la identidad administrada de la VM
 }
