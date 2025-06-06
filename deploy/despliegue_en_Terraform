@@ -1,6 +1,7 @@
 az login
 
 $ terraform init
+
 Initializing the backend...
 Initializing provider plugins...
 - Reusing previous version of hashicorp/azurerm from the dependency lock file
@@ -17,6 +18,7 @@ rerun this command to reinitialize your working directory. If you forget, other
 commands will detect it and remind you to do so if necessary.
 
 $ terraform plan -var-file="secrets.tfvars"
+
 data.azurerm_client_config.current: Reading...
 data.azurerm_client_config.current: Read complete after 0s [id=xxxxxxxxxx]
 
@@ -1082,36 +1084,36 @@ Do you want to perform these actions?
 
 azurerm_resource_group.rg: Creating...
 azurerm_resource_group.rg: Still creating... [10s elapsed]
-azurerm_resource_group.rg: Creation complete after 13s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg]
+azurerm_resource_group.rg: Creation complete after 13s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg]
 azurerm_network_security_group.nsg: Creating...
 azurerm_virtual_network.vnet: Creating...
 azurerm_key_vault.keyvault: Creating...
 azurerm_public_ip.bastion_ip: Creating...
 azurerm_storage_account.storage: Creating...
-azurerm_public_ip.bastion_ip: Creation complete after 4s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Network/publicIPAddresses/bastion-public-ip]
-azurerm_network_security_group.nsg: Creation complete after 4s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkSecurityGroups/nsg-ad-ds]
+azurerm_public_ip.bastion_ip: Creation complete after 4s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Network/publicIPAddresses/bastion-public-ip]
+azurerm_network_security_group.nsg: Creation complete after 4s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkSecurityGroups/nsg-ad-ds]
 azurerm_network_security_rule.allow_bastion_rdp: Creating...
 azurerm_network_security_rule.deny_all_outbound: Creating...
 azurerm_network_security_rule.deny_all_inbound: Creating...
 azurerm_network_security_rule.allow_storage_access: Creating...
-azurerm_virtual_network.vnet: Creation complete after 6s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Network/virtualNetworks/vnet-ad-ds]
+azurerm_virtual_network.vnet: Creation complete after 6s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Network/virtualNetworks/vnet-ad-ds]
 azurerm_subnet.subnet: Creating...
 azurerm_subnet.bastion_subnet: Creating...
-azurerm_network_security_rule.allow_bastion_rdp: Creation complete after 2s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkSecurityGroups/nsg-ad-ds/securityRules/Allow-Bastion-RDP]
-azurerm_network_security_rule.allow_storage_access: Creation complete after 2s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkSecurityGroups/nsg-ad-ds/securityRules/Allow-Storage-Access]
-azurerm_network_security_rule.deny_all_inbound: Creation complete after 3s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkSecurityGroups/nsg-ad-ds/securityRules/Deny-All-Inbound]
-azurerm_network_security_rule.deny_all_outbound: Creation complete after 3s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkSecurityGroups/nsg-ad-ds/securityRules/Deny-All-Outbound]
+azurerm_network_security_rule.allow_bastion_rdp: Creation complete after 2s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkSecurityGroups/nsg-ad-ds/securityRules/Allow-Bastion-RDP]
+azurerm_network_security_rule.allow_storage_access: Creation complete after 2s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkSecurityGroups/nsg-ad-ds/securityRules/Allow-Storage-Access]
+azurerm_network_security_rule.deny_all_inbound: Creation complete after 3s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkSecurityGroups/nsg-ad-ds/securityRules/Deny-All-Inbound]
+azurerm_network_security_rule.deny_all_outbound: Creation complete after 3s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkSecurityGroups/nsg-ad-ds/securityRules/Deny-All-Outbound]
 azurerm_key_vault.keyvault: Still creating... [10s elapsed]
 azurerm_storage_account.storage: Still creating... [10s elapsed]
-azurerm_subnet.subnet: Creation complete after 5s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Network/virtualNetworks/vnet-ad-ds/subnets/subnet-ad-ds]
+azurerm_subnet.subnet: Creation complete after 5s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Network/virtualNetworks/vnet-ad-ds/subnets/subnet-ad-ds]
 azurerm_network_interface.nic-ad-ds: Creating...
-azurerm_subnet.bastion_subnet: Creation complete after 9s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Network/virtualNetworks/vnet-ad-ds/subnets/AzureBastionSubnet]
+azurerm_subnet.bastion_subnet: Creation complete after 9s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Network/virtualNetworks/vnet-ad-ds/subnets/AzureBastionSubnet]
 azurerm_bastion_host.bastion: Creating...
 azurerm_key_vault.keyvault: Still creating... [20s elapsed]
 azurerm_storage_account.storage: Still creating... [20s elapsed]
 azurerm_network_interface.nic-ad-ds: Still creating... [10s elapsed]
 azurerm_bastion_host.bastion: Still creating... [10s elapsed]
-azurerm_network_interface.nic-ad-ds: Creation complete after 16s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkInterfaces/nic-ad-ds]
+azurerm_network_interface.nic-ad-ds: Creation complete after 16s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Network/networkInterfaces/nic-ad-ds]
 azurerm_windows_virtual_machine.ad-ds-vm: Creating...
 azurerm_key_vault.keyvault: Still creating... [30s elapsed]
 azurerm_storage_account.storage: Still creating... [30s elapsed]
@@ -1123,16 +1125,16 @@ azurerm_bastion_host.bastion: Still creating... [30s elapsed]
 azurerm_windows_virtual_machine.ad-ds-vm: Still creating... [20s elapsed]
 azurerm_key_vault.keyvault: Still creating... [50s elapsed]
 azurerm_storage_account.storage: Still creating... [50s elapsed]
-azurerm_windows_virtual_machine.ad-ds-vm: Creation complete after 28s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Compute/virtualMachines/ad-ds-vm]
+azurerm_windows_virtual_machine.ad-ds-vm: Creation complete after 28s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Compute/virtualMachines/ad-ds-vm]
 azurerm_bastion_host.bastion: Still creating... [40s elapsed]
 azurerm_key_vault.keyvault: Still creating... [1m0s elapsed]
 azurerm_storage_account.storage: Still creating... [1m0s elapsed]
 azurerm_bastion_host.bastion: Still creating... [50s elapsed]
-azurerm_storage_account.storage: Creation complete after 1m6s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Storage/storageAccounts/mystaccdsfs64565dfsrhs]
+azurerm_storage_account.storage: Creation complete after 1m6s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Storage/storageAccounts/mystaccdsfs64565dfsrhs]
 data.azurerm_storage_account_sas.storagesas: Reading...
 azurerm_storage_container.scripts_container: Creating...
 data.azurerm_storage_account_sas.storagesas: Read complete after 0s [id=86b6daacd5ed62e6dfbd3ae7a544ed2347643335f90b4e0fe22abd683f205c4f]
-azurerm_storage_container.scripts_container: Creation complete after 2s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Storage/storageAccounts/mystaccdsfs64565dfsrhs/blobServices/default/containers/scripts]
+azurerm_storage_container.scripts_container: Creation complete after 2s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Storage/storageAccounts/mystaccdsfs64565dfsrhs/blobServices/default/containers/scripts]
 azurerm_virtual_machine_extension.run_ad_setup: Creating...
 azurerm_storage_blob.post_ad_setup_script: Creating...
 azurerm_storage_blob.ad_setup_script: Creating...
@@ -1166,7 +1168,7 @@ azurerm_key_vault.keyvault: Still creating... [2m30s elapsed]
 azurerm_bastion_host.bastion: Still creating... [2m20s elapsed]
 azurerm_virtual_machine_extension.run_ad_setup: Still creating... [1m30s elapsed]
 azurerm_key_vault.keyvault: Still creating... [2m40s elapsed]
-azurerm_key_vault.keyvault: Creation complete after 2m44s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.KeyVault/vaults/mykvdsfs64565dfsrhs]
+azurerm_key_vault.keyvault: Creation complete after 2m44s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.KeyVault/vaults/mykvdsfs64565dfsrhs]
 azurerm_role_assignment.kv_secrets_admin: Creating...
 azurerm_role_assignment.kv_secrets_user: Creating...
 azurerm_bastion_host.bastion: Still creating... [2m30s elapsed]
@@ -1179,11 +1181,11 @@ azurerm_role_assignment.kv_secrets_admin: Still creating... [20s elapsed]
 azurerm_role_assignment.kv_secrets_user: Still creating... [20s elapsed]
 azurerm_bastion_host.bastion: Still creating... [2m50s elapsed]
 azurerm_virtual_machine_extension.run_ad_setup: Still creating... [2m0s elapsed]
-azurerm_role_assignment.kv_secrets_user: Creation complete after 29s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.KeyVault/vaults/mykvdsfs64565dfsrhs/providers/Microsoft.Authorization/roleAssignments/eba5684c-b217-3176-6b19-9beb5b833c38]  
-azurerm_role_assignment.kv_secrets_admin: Creation complete after 29s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.KeyVault/vaults/mykvdsfs64565dfsrhs/providers/Microsoft.Authorization/roleAssignments/fcdb8612-7445-5d1a-864a-06f7ad0c3616] 
+azurerm_role_assignment.kv_secrets_user: Creation complete after 29s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.KeyVault/vaults/mykvdsfs64565dfsrhs/providers/Microsoft.Authorization/roleAssignments/eba5684c-b217-3176-6b19-9beb5b833c38]  
+azurerm_role_assignment.kv_secrets_admin: Creation complete after 29s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.KeyVault/vaults/mykvdsfs64565dfsrhs/providers/Microsoft.Authorization/roleAssignments/fcdb8612-7445-5d1a-864a-06f7ad0c3616] 
 azurerm_key_vault_secret.sas_token: Creating...
 azurerm_key_vault_secret.sas_token: Creation complete after 1s [id=https://mykvdsfs64565dfsrhs.vault.azure.net/secrets/blob-sas-token/335fe42d19894ed99d897e875038c802]
-azurerm_virtual_machine_extension.run_ad_setup: Creation complete after 6m21s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Compute/virtualMachines/ad-ds-vm/extensions/run-ad-setup]
-azurerm_bastion_host.bastion: Creation complete after 9m46s [id=/subscriptions/c692d12d-f39e-4666-968b-f899927b8c7e/resourceGroups/AD-DS-rg/providers/Microsoft.Network/bastionHosts/bastion-ad-ds]
+azurerm_virtual_machine_extension.run_ad_setup: Creation complete after 6m21s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Compute/virtualMachines/ad-ds-vm/extensions/run-ad-setup]
+azurerm_bastion_host.bastion: Creation complete after 9m46s [id=/subscriptions/XXXXXXXX-XXXX-XXXX-XXXXXXXXX/resourceGroups/AD-DS-rg/providers/Microsoft.Network/bastionHosts/bastion-ad-ds]
 
 Apply complete! Resources: 22 added, 0 changed, 0 destroyed.
