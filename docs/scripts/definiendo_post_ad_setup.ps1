@@ -1,26 +1,25 @@
 ## Definiendo post_ad_setup.ps1
 
-Start-Sleep -Seconds 60
+Start-Sleep -Seconds 60       #Pausa la ejecucion del script 60 segundos. Damos tiempo a que el sistema o algunos procesos acaben de iniciarse
 
 # Agregar el sufijo UPN
-$context = [System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
-$context.UpnSuffixes.Add("midominiodeAzure.com")
-Write-Output "Sufijo UPN agregado correctamente."
+$context = [System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest() #Obtenemos el objeto que representa el bosque de Active Directory en el que se encuentra el equipo y lo asignamos a la variable $context para poder operar sobre él posteriormente
+$context.UpnSuffixes.Add("midominiodeAzure.com")                                 #Añadimos un nuevo sufijo de correo principal de usuario al bosque, permitiendo una futura sincronización con Azure
 
 # Configuración de políticas de grupo (GPO) en SYSVOL
-$gpoPath = "C:\\Windows\\SYSVOL\\domain\\Policies"
-New-Item -Path "$gpoPath\\GPO-Seguridad" -ItemType Directory
-New-Item -Path "$gpoPath\\GPO-Restricciones" -ItemType Directory
+$gpoPath = "C:\\Windows\\SYSVOL\\domain\\Policies"                               #Asigna a la variable $gpoPath la ruta base donde se almacenan las políticas de grupo en el controlador de dominio
+New-Item -Path "$gpoPath\\GPO-Seguridad" -ItemType Directory                     #Crea una nueva carpeta llamada GPO-Seguridad dentro de la ruta definida
+New-Item -Path "$gpoPath\\GPO-Restricciones" -ItemType Directory                 #Crea una nueva carpeta llamada GPO-Restricciones dentro de la ruta definida
 
 # Creación de GPO
-Import-Module GroupPolicy
-New-GPO -Name "BloquearUSB"
-New-GPLink -Name "BloquearUSB" -Target "DC=miejemplo,DC=local"
-Set-GPRegistryValue -Name "BloquearUSB" -Key "HKLM\\SYSTEM\\CurrentControlSet\\Services\\USBSTOR" -ValueName "Start" -Type DWORD -Value 4
+Import-Module GroupPolicy                                                        #Carga el módulo de PowerShell para crear, modificar y vincular GPOs
+New-GPO -Name "BloquearUSB"                                                      #Creamos una nueva GPO denominada "BloquearUSB"
+New-GPLink -Name "BloquearUSB" -Target "DC=miejemplo,DC=local"                   #Vinculamos la GPO "BloquearUSB" al contenedor de Active Directory identificado por "DC=miejemplo,DC=local"
+Set-GPRegistryValue -Name "BloquearUSB" -Key "HKLM\\SYSTEM\\CurrentControlSet\\Services\\USBSTOR" -ValueName "Start" -Type DWORD -Value 4  #Establecemos una configuración específica en el registro. Deshabilitamos el servicio de almacenamiento USB en el sistema
 
-New-ADOrganizationalUnit -Name "Usuarios" -Path "DC=miejemplo,DC=local"
+New-ADOrganizationalUnit -Name "Usuarios" -Path "DC=miejemplo,DC=local"          #Creamos una nueva unidad organizativa llamada "Usuarios" directamente en el dominio "miejemplo.local"
 
-# Usuarios
+# Usuarios                                                                                 #Listado de usarios a dar de alta en formato json
 $users = @(
     @{ Name = 'Carlos Sanchez';   Username = 'csanchez';   Password = 'P@ssw0rd1' },
     @{ Name = 'Ana Rodriguez';      Username = 'arodriguez';  Password = 'P@ssw0rd2' },
@@ -30,10 +29,10 @@ $users = @(
 )
 
 # Importar el módulo de Active Directory
-Import-Module ActiveDirectory
+Import-Module ActiveDirectory                                                             #Importamos el módulo de ActiveDirectory
 
 # Crear usuarios en AD DS
-foreach ($user in $users) {
+foreach ($user in $users) {                                                               #Iteramos sobre cada usuario del listado estableciendoles determinados parámetros
     New-ADUser -Name $user.Name `
                -SamAccountName $user.Username `
                -UserPrincipalName "$($user.Username)@miejemplo.local" `
@@ -41,11 +40,7 @@ foreach ($user in $users) {
                -Enabled $true `
                -Path 'OU=Usuarios,DC=miejemplo,DC=local' `
                -PassThru | Out-Null
-
-    Write-Output "Usuario $($user.Username) creado correctamente."
 }
 
-Write-Output 'Todos los usuarios han sido creados exitosamente en Active Directory.'
-
 # Eliminar tarea programada
-Unregister-ScheduledTask -TaskName "PostADDSConfig" -Confirm:$false
+Unregister-ScheduledTask -TaskName "PostADDSConfig" -Confirm:$false                       #Eliminamos la tarea que programamos en el script "ad_setup.ps1"
