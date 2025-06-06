@@ -1,0 +1,13 @@
+Mis recomendaciones son:
+
+-Siempre que puedas, protege tus VMs con Azure Bastion. Azure Bastion se comunica de manera interna con la VM a través de RDP (Remote Desktop Protocol - 3389)
+sin exponer el puerto de la maquina virtual al exterior. La conexión del usuario a la VM se realiza a través de HTTPS (HyperText Transfer Protocol Secure - 443) 
+a través de un tunel seguro originado en Azure.
+
+-Cuando crees un Azure Bastion, recuerda llamar a la subnet "AzureBastionSubnet" de lo contrario no aceptará la configuración. Se recomienda mínimo un /27 para esta subnet
+
+-Siempre que crees reglas de seguridad para un NSG (Netwowk Security Group) considera que necesitas permitir. Aplica reglas que permitan con una prioridad mas baja
+y deniega como regla todo lo demas. Tanto en sentido "inbound" como "outbound".
+
+  Por ejemplo: En la configuración que aquí se expone, creamos una regla de entrada para el NSG que permite la conexión a través de RDP desde la subnet Azure Bastion
+  hacia la VM. Como solo necesito esa regla de entrada, deniego TODO (*) lo que no sea esto.
