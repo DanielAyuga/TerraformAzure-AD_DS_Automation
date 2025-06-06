@@ -8,7 +8,7 @@ Import-Module ActiveDirectory                                             #Carga
 Install-WindowsFeature -Name DNS -IncludeManagementTools                  #Instala el servicio DNS, para resolver nombres dentro del dominio. También incluye herramientas de administración, como DNS Manager
 
 $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File C:\post_ad_setup.ps1"           #Definimos que $action es una nueva tarea que ejecuta el script en Poweshell
-$trigger = New-ScheduledTaskTrigger -AtStartup                                                               #El disparador será el inicio de la VM
+$trigger = New-ScheduledTaskTrigger -AtLogon                                                                 #El disparador será el login de la VM
 $principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount                           #Crea un objeto que representa el usuario bajo el cual se ejecutará la tarea bajo la cuenta SYSTEM, que tiene privilegios administrativos en la máquina. La tarea se ejecutará en segundo plano sin necesidad de que un usuario inicie sesión
 Register-ScheduledTask -TaskName "PostADDSConfig" -Action $action -Trigger $trigger -Principal $principal    #Registra la tarea programada con el nombre "PostADDSConfig" y usa las variables previamente definidas
 
