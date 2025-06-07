@@ -179,12 +179,6 @@ resource "azurerm_storage_account" "storage" {
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-
-  network_rules {
-    default_action             = "Deny"
-    virtual_network_subnet_ids = [azurerm_subnet.subnet.id]
-    bypass                     = ["AzureServices"]
-  }
 }
 
 # Creación de contenedor
