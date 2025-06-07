@@ -31,4 +31,4 @@ acceso a ellos.
 -Cuando se crea una token SAS (Shared Access Signature - Firma de acceso compartido) para permitir ciertas acciones, recuerda aplicar dos conceptos de seguridad claves:
 JIT (Just In Time) y JEA (Just Enought Access).
   -El fundamento de JIT es asignar el permiso cuando se necesita y SOLO durante el tiempo que se necesita.
-  -El fundamento de JEA es asignar el permiso que se necesita. No dar mas privilegios de los necesarios.
+  -El fundamento de JEA es asignar el permiso que se necesita. No dar mas privilegios de los necesarios (privilegios mínimos).
