@@ -6,8 +6,29 @@ a través de un tunel seguro originado en Azure.
 
 -Cuando crees un Azure Bastion, recuerda llamar a la subnet "AzureBastionSubnet" de lo contrario no aceptará la configuración. Se recomienda mínimo un /27 para esta subnet
 
--Siempre que crees reglas de seguridad para un NSG (Netwowk Security Group) considera que necesitas permitir. Aplica reglas que permitan con una prioridad mas baja
+-Siempre que creas reglas de seguridad para un NSG (Netwowk Security Group) considera que necesitas permitir. Aplica reglas que permitan con una prioridad mas baja
 y deniega como regla todo lo demas. Tanto en sentido "inbound" como "outbound".
 
   Por ejemplo: En la configuración que aquí se expone, creamos una regla de entrada para el NSG que permite la conexión a través de RDP desde la subnet Azure Bastion
   hacia la VM. Como solo necesito esa regla de entrada, deniego TODO (*) lo que no sea esto.
+
+-Cuando creamos una VM, nunca le asignamos una IP pública si no es necesario. Así evitamos exponer nuesta VM a Internet. En cuanto a "CustomScriptExtension", le 
+definimos en el apartado "settings" su funcionalidad. Cuando desplegamos este tipo de extensión desde Terraform, admite variables de la infrastructura que declaramos en
+la propia configuración. Es decir, si creo un SAS_token en la configuración, en este apartado puedo hacer referencia a el. Aprovecha esta capacidad.
+
+-Todas las especificaciones de un SKU de un producto en Azure, tiene su documentación en la web de Microsoft. Investiga que necesidades tienes y busca la que mejor se
+adapte a la infraestrucura que estás desarrollando. Siempre habrá una que cumpla con la funcionalidad que necesitas.
+
+-Para realizar una prueba o una práctica, la redundancia LRS (Local Redundant Storage) es suficiente. Para entornos reales, planta bien que tipo de redundancia necesitas
+en funcion de la criticidad de tu servicio y complementalo con servicios de recuperación ante desastres o backups.
+
+-Cuando creamos una cuenta de almacenamiento o un contenedor, establece el acceso como privado por defecto y luego especifica quién puede acceder a esos datos a través
+de roles de RBAC (Role-Based Access Control) o service endpoints (puntos de conexión de servicio)
+
+-Almacena siempre que puedas tus claves, secretos o certificados en un Key Vault. Es la forma mas segura de hacerlo teniendo ademas una fácil configuración y un rápido
+acceso a ellos.
+
+-Cuando se crea una token SAS (Shared Access Signature - Firma de acceso compartido) para permitir ciertas acciones, recuerda aplicar dos conceptos de seguridad claves:
+JIT (Just In Time) y JEA (Just Enought Access).
+  -El fundamento de JIT es asignar el permiso cuando se necesita y SOLO durante el tiempo que se necesita.
+  -El fundamento de JEA es asignar el permiso que se necesita. No dar mas privilegios de los necesarios.
