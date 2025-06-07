@@ -24,9 +24,9 @@ Para ello, desde Terraform, crearé:
   
   - Una interfaz de red (NIC) para la máquina virtual
 
-  -Un Azure Key Vault
+  - Un Azure Key Vault
 
-  -Un SAS (Shared Access Signature) token
+  - Un SAS (Shared Access Signature) token
   
   - Una Storage Account
   
