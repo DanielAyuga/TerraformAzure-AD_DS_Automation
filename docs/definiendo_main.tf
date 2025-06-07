@@ -184,12 +184,6 @@ resource "azurerm_storage_account" "storage" {                            #Indic
   location                 = azurerm_resource_group.rg.location           #Se toma la ubicación del grupo de recursos definido anteriormente
   account_tier             = "Standard"                                   #Rendimiento de la cuenta. Con Standard para el ejemplo es suficiente. (Puede ser premium)
   account_replication_type = "LRS"                                        #Tipo redundancia para la cuenta: Standard_LRS almacena 3 copias del disco dentro de un mismo datacenter, el cual pertenece a una única zona de disponibilidad de la región 
-
-  network_rules {
-    default_action             = "Deny"                                   #Bloquea accesos desde Internet
-    virtual_network_subnet_ids = [azurerm_subnet.subnet.id]               #Permite solo acceso desde la vnet creada anteriormente
-    bypass                     = ["AzureServices"]                        #Permite acceso desde servicios internos de Azure
-  }
 }
 
 # Contenedor para la cuenta de almacenamiento
